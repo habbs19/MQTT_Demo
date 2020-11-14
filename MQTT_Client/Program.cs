@@ -5,20 +5,22 @@ namespace MQTT_Client
 {
     class Program
     {
-        [Obsolete]
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Hello IOT!");
 
             var client = new Client();
 
-            client.Subscribe("/home");
+            client.Subscribe("iot/a6");
             
             while (true)
             {
+                //Console.WriteLine("Select QOS Level to Publish:");
+
                 var input = Console.ReadLine();
-                client.Publish("/home", input);
+                client.Publish_AtLeastOnce("iot/a6", input);
             }
         }
+
     }
 }

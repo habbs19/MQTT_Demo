@@ -11,16 +11,12 @@ namespace MQTT_Client
 {
     public class Client
     {
-        private readonly string MQTT_BROKER_ADDRESS = "35.158.43.238";
+        private readonly string MQTT_BROKER_ADDRESS = "broker.hivemq.com";
 
-        [Obsolete]
         public void Subscribe(string topic)
-        {
-            var address = IPAddress.Parse(MQTT_BROKER_ADDRESS);
-            address.MapToIPv4();
-            
+        {                        
             // create client instance 
-            MqttClient client = new MqttClient(address);
+            MqttClient client = new MqttClient(MQTT_BROKER_ADDRESS);
 
             // register to message received 
             client.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
@@ -30,13 +26,28 @@ namespace MQTT_Client
 
             // subscribe to the topic  with QoS 2 
             client.Subscribe(new string[] { topic }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });
-        }
+        }       
 
-        [Obsolete]
-        public void Publish(string topic, string message)
+        public void Publish_AtLeastOnce(string topic, string message)
+        {
+            Publish(topic, MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, message);
+        }
+        public void Publish_AtMostOnce(string topic, string message)
+        {
+            Publish(topic, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, message);
+        }
+        public void Publish_ExactlyOnce(string topic, string message)
+        {
+            Publish(topic, MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, message);
+        }
+        public void Publish_GrantedFailure(string topic, string message)
+        {
+            Publish(topic, MqttMsgBase.QOS_LEVEL_GRANTED_FAILURE, message);
+        }
+        private void Publish(string topic, byte qosLevel, string message)
         {
             // create client instance 
-            MqttClient client = new MqttClient(IPAddress.Parse(MQTT_BROKER_ADDRESS));
+            MqttClient client = new MqttClient(MQTT_BROKER_ADDRESS);
 
             string clientId = Guid.NewGuid().ToString();
             client.Connect(clientId);
@@ -44,7 +55,7 @@ namespace MQTT_Client
             string strValue = Convert.ToString(message);
 
             // publish a message on "/home/temperature" topic with QoS 2 
-            client.Publish(topic, Encoding.UTF8.GetBytes(strValue), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
+            client.Publish(topic, Encoding.UTF8.GetBytes(strValue), qosLevel, false);
         }
 
         static void client_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
