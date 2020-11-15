@@ -1,20 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
+using System.Text;
 using System.IO;
 using System.Net;
-using System.Text;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
+using System.Windows.Controls;
+using System.Threading;
+using System.Diagnostics;
+using System.Windows;
 
-namespace MQTT_Client
+namespace MQTT_Demo
 {
-    public class Client
+    public class MQTT_Client
     {
         private readonly string MQTT_BROKER_ADDRESS = "broker.hivemq.com";
 
         public void Subscribe(string topic)
-        {                        
+        {
             // create client instance 
             MqttClient client = new MqttClient(MQTT_BROKER_ADDRESS);
 
@@ -26,7 +29,7 @@ namespace MQTT_Client
 
             // subscribe to the topic  with QoS 2 
             client.Subscribe(new string[] { topic }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });
-        }       
+        }
 
         public void Publish_AtLeastOnce(string topic, string message)
         {
@@ -39,10 +42,6 @@ namespace MQTT_Client
         public void Publish_ExactlyOnce(string topic, string message)
         {
             Publish(topic, MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, message);
-        }
-        public void Publish_GrantedFailure(string topic, string message)
-        {
-            Publish(topic, MqttMsgBase.QOS_LEVEL_GRANTED_FAILURE, message);
         }
         private void Publish(string topic, byte qosLevel, string message)
         {
@@ -60,19 +59,21 @@ namespace MQTT_Client
 
         static void client_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
         {
-            // handle message received 
-            using(Stream s = new MemoryStream(e.Message))
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                using(StreamReader reader = new StreamReader(s))
+                var messages = Application.Current.MainWindow.FindName("messages") as TextBox;
+                using (Stream s = new MemoryStream(e.Message))
                 {
-
-                    while (!reader.EndOfStream)
+                    using (StreamReader reader = new StreamReader(s))
                     {
-                        Console.WriteLine(reader.ReadLine());
+                        while (!reader.EndOfStream)
+                        {
+                            var message = $"{reader.ReadLine()}\n";
+                            messages.Text += message;
+                        }
                     }
-                    Console.WriteLine("Done reading");
                 }
-            }
+            });           
         }
 
     }
