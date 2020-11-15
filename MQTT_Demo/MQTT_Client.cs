@@ -43,9 +43,6 @@ namespace MQTT_Demo
             // register to message received 
             client.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
 
-            string clientId = Guid.NewGuid().ToString();
-            client.Connect(clientId);
-
             // subscribe to the topic
             client.Subscribe(new string[] { topic }, new byte[] { qosLevel });
         }
