@@ -5,19 +5,31 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MQTT_Demo"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" ResizeMode="NoResize">
+        Title="IOT A6 Test Client" Height="550" Width="800" ResizeMode="NoResize">
     <Grid Name="LayoutRoot">
-        <ListBox x:Name="subscribeListBox" Margin="489,116,10,118" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="2"/>
-        <Label x:Name="label" Content="Publish:" FontSize="14" Margin="10,321,707,0" VerticalAlignment="Top"/>
-        <Label x:Name="label1" FontSize="20" Content="IOT Assignment 6 - MQTT Demo" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="38" Width="474"/>
-        <Label x:Name="label2" FontSize="14" Content="Subscribe:" Margin="489,53,10,0" VerticalAlignment="Top"/>
-        <Button x:Name="subscribeBtn" Content="Subscribe" Margin="698,87,10,0" VerticalAlignment="Top" Height="24" Click="subscribeBtn_Click"/>
-        <TextBox FontSize="14" x:Name="publishTopic" MaxHeight="29" MaxLines="1" Margin="98,321,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Height="29" HorizontalAlignment="Left" Width="386"/>
-        <TextBox x:Name="subscribeTopic" Margin="489,87,107,0" Text="" TextWrapping="NoWrap" Height="24" VerticalAlignment="Top"/>
-        <TextBox x:Name="message" Margin="10,355,107,10" Text="" TextWrapping="Wrap" FontSize="14"/>
-        <Button x:Name="publishBtn" Content="Send" Margin="698,355,10,10" Click="publishBtn_Click"/>
-        <TextBox x:Name="messages" Margin="10,53,316,118" Text="" TextWrapping="Wrap" IsEnabled="False"/>
-        <ComboBox x:Name="qosLevels" Margin="489,321,10,0" VerticalAlignment="Top" Height="29" FontSize="14"/>
-        <TextBlock x:Name="host" FontSize="14" HorizontalAlignment="Left" Margin="489,10,0,0" Text="Host: broker.hivemq.com" TextWrapping="Wrap" VerticalAlignment="Top" Width="301" Height="41"/>
+        <ListBox x:Name="subscribeListBox" Margin="489,218,10,123" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+        <Label x:Name="label" Content="Publish:" FontSize="14" Margin="10,452,707,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <Label x:Name="label1" FontSize="20" Content="IOT Assignment 6 - MQTT Demo" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"  Grid.ColumnSpan="2"/>
+        <Label x:Name="label2" FontSize="14" Content="Subscribe:" Margin="489,121,10,0" VerticalAlignment="Top"/>
+        <Button x:Name="subscribeBtn" Content="Subscribe" Margin="710,155,10,0" VerticalAlignment="Top" Click="subscribeBtn_Click"/>
+        <TextBox FontSize="14" x:Name="publishTopic"  MaxLines="1" Margin="104,452,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="227" Grid.Column="1"/>
+        <TextBox x:Name="subscribeTopic" Margin="489,155,107,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top"/>
+
+
+        <TextBox x:Name="messages" Margin="10,155,316,87" Text="" TextWrapping="Wrap" IsReadOnly="True" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="2"/>
+        <ComboBox x:Name="pubQOSLevels" Margin="344,452,210,0" VerticalAlignment="Top" FontSize="14" Grid.Column="1"/>
+        <Label x:Name="msgsLabel" FontSize="14" Content="Messages:" Margin="10,121,489,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <CheckBox Name="chkRetain" Content="Retain" HorizontalAlignment="Left" Margin="600,460,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="subQOSLevels" Margin="489,184,10,0" VerticalAlignment="Top" FontSize="14"/>
+        <Label x:Name="lblClientID" FontSize="14" Content="Client ID:" Margin="28,86,688,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <Button x:Name="connectBtn" Content="Connect/Disconnect" HorizontalAlignment="Left" Margin="280,57,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.014,1.113" Click="connectBtn_Click" />
+        <TextBox x:Name="txtbClientID" Margin="104,92,555,0" Text="" TextWrapping="NoWrap"  VerticalAlignment="Top"/>
+        <Label x:Name="lblConnect_Copy" FontSize="14" Content="Last Will:" Margin="247,87,418,0" VerticalAlignment="Top"/>
+        <Label x:Name="lblConnection" FontSize="14" Content="Connection: Disconnected" Margin="10,53,582,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtbWillMsg" Margin="314,91,345,0" Text="" TextWrapping="NoWrap"  VerticalAlignment="Top"/>
+        <Label x:Name="lblConnect_Copy1" FontSize="14" Content="Last Will Topic:" Margin="468,86,210,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtbWillTopic" Margin="584,91,113,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top"/>
+        <Button x:Name="publishBtn" Content="Send" HorizontalAlignment="Left" Margin="600,486,0,0" VerticalAlignment="Top" Click="publishBtn_Click" RenderTransformOrigin="0.514,-0.315"/>
+        <TextBox x:Name="message" HorizontalAlignment="Left" Margin="10,486,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="580" />
     </Grid>
 </Window>

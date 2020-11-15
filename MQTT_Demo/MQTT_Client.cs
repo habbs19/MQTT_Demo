@@ -14,47 +14,47 @@ namespace MQTT_Demo
 {
     public class MQTT_Client
     {
-        private readonly string MQTT_BROKER_ADDRESS = "broker.hivemq.com";
+        private MqttClient client;
+        //private readonly string MQTT_BROKER_ADDRESS = "broker.hivemq.com";
+        //private readonly string MQTT_BROKER_ADDRESS = "192.168.2.199";
+        private readonly string MQTT_BROKER_ADDRESS = "0.tcp.ngrok.io";
+        private readonly int MQTT_BROKER_PORT = 13489;
 
-        public void Subscribe(string topic)
+        public bool Connected { get; private set; } = false;
+
+        public void Connect(string clientID, string lastWillTopic, string lastwillMsg)
         {
-            // create client instance 
-            MqttClient client = new MqttClient(MQTT_BROKER_ADDRESS);
+            client = new MqttClient(MQTT_BROKER_ADDRESS, MQTT_BROKER_PORT, false, null, null, MqttSslProtocols.None);
+            client.Connect(clientID, "", "", false, MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, true, lastWillTopic, lastwillMsg, false, 60);
+            Connected = true;
+        }
 
+        public void Disconnect()
+        {
+            client.Disconnect();
+            Connected = false;
+
+            //unregister
+            client.MqttMsgPublishReceived -= client_MqttMsgPublishReceived;
+        }
+
+        public void Subscribe(string topic, byte qosLevel)
+        {
             // register to message received 
             client.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
 
             string clientId = Guid.NewGuid().ToString();
             client.Connect(clientId);
 
-            // subscribe to the topic  with QoS 2 
-            client.Subscribe(new string[] { topic }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });
+            // subscribe to the topic
+            client.Subscribe(new string[] { topic }, new byte[] { qosLevel });
         }
 
-        public void Publish_AtLeastOnce(string topic, string message)
+        public void Publish(string topic, byte qosLevel, bool retain, string message)
         {
-            Publish(topic, MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, message);
-        }
-        public void Publish_AtMostOnce(string topic, string message)
-        {
-            Publish(topic, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, message);
-        }
-        public void Publish_ExactlyOnce(string topic, string message)
-        {
-            Publish(topic, MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, message);
-        }
-        private void Publish(string topic, byte qosLevel, string message)
-        {
-            // create client instance 
-            MqttClient client = new MqttClient(MQTT_BROKER_ADDRESS);
-
-            string clientId = Guid.NewGuid().ToString();
-            client.Connect(clientId);
-
             string strValue = Convert.ToString(message);
-
-            // publish a message on "/home/temperature" topic with QoS 2 
-            client.Publish(topic, Encoding.UTF8.GetBytes(strValue), qosLevel, false);
+            // publish a message
+            client.Publish(topic, Encoding.UTF8.GetBytes(strValue), qosLevel, retain);
         }
 
         static void client_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
