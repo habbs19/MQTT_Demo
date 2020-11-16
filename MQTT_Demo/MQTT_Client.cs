@@ -17,16 +17,27 @@ namespace MQTT_Demo
         private MqttClient client;
         //private readonly string MQTT_BROKER_ADDRESS = "broker.hivemq.com";
         //private readonly string MQTT_BROKER_ADDRESS = "192.168.2.199";
-        private readonly string MQTT_BROKER_ADDRESS = "0.tcp.ngrok.io";
-        private readonly int MQTT_BROKER_PORT = 13489;
+        private readonly string MQTT_BROKER_ADDRESS = "2.tcp.ngrok.io";
+        private readonly int MQTT_BROKER_PORT = 15901;
 
         public bool Connected { get; private set; } = false;
 
         public void Connect(string clientID, string lastWillTopic, string lastwillMsg)
         {
             client = new MqttClient(MQTT_BROKER_ADDRESS, MQTT_BROKER_PORT, false, null, null, MqttSslProtocols.None);
-            client.Connect(clientID, "", "", false, MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, true, lastWillTopic, lastwillMsg, false, 60);
-            Connected = true;
+
+            if (lastwillMsg != null && lastWillTopic != null)
+            {
+                client.Connect(clientID, "", "", false, MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, true, lastWillTopic, lastwillMsg, false, 60);
+                client.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
+                Connected = true;
+            }
+            else
+            {
+                client.Connect(clientID);
+                client.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
+                Connected = true;
+            }
         }
 
         public void Disconnect()
@@ -40,9 +51,6 @@ namespace MQTT_Demo
 
         public void Subscribe(string topic, byte qosLevel)
         {
-            // register to message received 
-            client.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
-
             // subscribe to the topic
             client.Subscribe(new string[] { topic }, new byte[] { qosLevel });
         }
